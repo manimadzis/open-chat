@@ -9,15 +9,44 @@ import (
 func TestRoleSystem_Check(t *testing.T) {
 	tests := []struct {
 		role                []entities.Role
-		requiredPermissions []entities.Permission
+		requiredPermissions []entities.PermissionValue
 		result              error
 	}{
-		{[]entities.Role{entities.NewRole(PERM_ADD_FILE)}, []entities.Permission{}, nil},
-		{[]entities.Role{entities.NewRole(PERM_ADD_FILE)}, []entities.Permission{PERM_ADD_FILE}, nil},
-		{[]entities.Role{entities.NewRole(PERM_DELETE_MESSAGE, PERM_DELETE_CHANNEL)}, []entities.Permission{PERM_DELETE_MESSAGE, PERM_DELETE_CHANNEL}, nil},
-		{[]entities.Role{entities.NewRole(PERM_DELETE_MESSAGE, PERM_INVITE_USER), entities.NewRole(PERM_ADD_STICKER, PERM_CHANGE_ROLE)}, []entities.Permission{PERM_CHANGE_ROLE}, nil},
-		{[]entities.Role{entities.NewRole(), entities.NewRole(PERM_DELETE_MESSAGE, PERM_INVITE_USER)}, []entities.Permission{PERM_ADD_FILE}, ErrNotEnoughPermissions},
-		{[]entities.Role{entities.NewRole(PERM_DELETE_MESSAGE), entities.NewRole(PERM_DELETE_MESSAGE, PERM_INVITE_USER)}, []entities.Permission{PERM_DELETE_MESSAGE, PERM_DELETE_CHANNEL}, ErrNotEnoughPermissions},
+		{
+			[]entities.Role{entities.NewRoleByPermissionValues(PERM_ADD_FILE)},
+			[]entities.PermissionValue{},
+			nil,
+		},
+		{
+			[]entities.Role{entities.NewRoleByPermissionValues(PERM_ADD_FILE)},
+			[]entities.PermissionValue{PERM_ADD_FILE},
+			nil,
+		},
+		{
+			[]entities.Role{entities.NewRoleByPermissionValues(PERM_DELETE_MESSAGE, PERM_DELETE_CHANNEL)},
+			[]entities.PermissionValue{PERM_DELETE_MESSAGE, PERM_DELETE_CHANNEL},
+			nil},
+		{[]entities.Role{
+			entities.NewRoleByPermissionValues(PERM_DELETE_MESSAGE, PERM_INVITE_USER),
+			entities.NewRoleByPermissionValues(PERM_ADD_STICKER, PERM_CHANGE_ROLE),
+		},
+			[]entities.PermissionValue{PERM_CHANGE_ROLE},
+			nil,
+		},
+		{
+			[]entities.Role{
+				entities.NewRoleByPermissionValues(),
+				entities.NewRoleByPermissionValues(PERM_DELETE_MESSAGE, PERM_INVITE_USER),
+			},
+			[]entities.PermissionValue{PERM_ADD_FILE},
+			ErrNotEnoughPermissions},
+		{
+			[]entities.Role{entities.NewRoleByPermissionValues(PERM_DELETE_MESSAGE),
+				entities.NewRoleByPermissionValues(PERM_DELETE_MESSAGE, PERM_INVITE_USER),
+			},
+			[]entities.PermissionValue{PERM_DELETE_MESSAGE, PERM_DELETE_CHANNEL},
+			ErrNotEnoughPermissions,
+		},
 	}
 
 	for _, test := range tests {

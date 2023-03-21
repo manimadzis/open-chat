@@ -3,5 +3,6 @@ package role_system
 import "open-chat/internal/entities"
 
 type RoleSystem interface {
-	Check(permission ...entities.Permission) error
+	// Check return ErrNotEnoughPermissions if required permissions are not guaranteed by roles.
+	Check(permission ...entities.PermissionValue) error
 }

@@ -3,44 +3,56 @@ package message_service
 import (
 	"context"
 	"open-chat/internal/entities"
-	"open-chat/internal/repositories/message_repository"
-	"open-chat/internal/repositories/user_repository"
+	"open-chat/internal/repositories"
 	"open-chat/internal/services/role_checker"
 	"open-chat/internal/services/role_system"
 )
 
 type messageService struct {
-	messageRepo message_repository.MessageRepository
-	userRepo    user_repository.UserRepository
+	messageRepo repositories.MessageRepository
+	serverRepo  repositories.ServerRepository
+	userRepo    repositories.UserRepository
 	roleChecker role_checker.RoleChecker
 }
 
 func (m *messageService) Send(ctx context.Context, message *entities.Message) error {
-	if err := m.roleChecker.Check(ctx, message.User, message.Channel.Server, role_system.PERM_SEND_MESSAGE); err != nil {
+	server, err := m.serverRepo.FindByMessageId(ctx, message.Id)
+	if err != nil {
+		return err
+	}
+	if err := m.roleChecker.Check(ctx, message.SenderId, server.Id, role_system.PERM_SEND_MESSAGE); err != nil {
 		return err
 	}
 	return m.messageRepo.Create(ctx, message)
 }
 
-func (m *messageService) Delete(ctx context.Context, message *entities.Message) error {
-	if err := m.roleChecker.Check(ctx, message.User, message.Channel.Server, role_system.PERM_SEND_MESSAGE); err != nil {
+func (m *messageService) Delete(ctx context.Context, messageId entities.MessageId, userId entities.UserId) error {
+	server, err := m.serverRepo.FindByMessageId(ctx, messageId)
+	if err != nil {
 		return err
 	}
-	return m.messageRepo.Delete(ctx, message)
+	if err := m.roleChecker.Check(ctx, userId, server.Id, role_system.PERM_SEND_MESSAGE); err != nil {
+		return err
+	}
+	return m.messageRepo.Delete(ctx, messageId)
 }
 
-func (m *messageService) Find(ctx context.Context, user *entities.User, channel *entities.Channel, filters *entities.MessageFiltersDTO) ([]*entities.Message, error) {
-	if err := m.roleChecker.Check(ctx, user, channel.Server, role_system.PERM_READ_MESSAGE); err != nil {
+func (m *messageService) FindInChat(ctx context.Context, userId entities.UserId, channelId entities.ChannelId, filters *entities.MessageFiltersDTO) ([]entities.Message, error) {
+	server, err := m.serverRepo.FindByChannelId(ctx, channelId)
+	if err != nil {
+		return nil, err
+	}
+	if err := m.roleChecker.Check(ctx, userId, server.Id, role_system.PERM_READ_MESSAGE); err != nil {
 		return nil, err
 	}
 
-	messages, err := m.messageRepo.FindByChannel(ctx, channel, filters.Offset, filters.Count)
+	messages, err := m.messageRepo.FindByChannel(ctx, channelId, filters.Offset, filters.Count)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := m.roleChecker.Check(ctx, user, channel.Server, role_system.PERM_READ_MESSAGE_HISTORY); err == nil {
-		serverProfile, err := m.userRepo.FindServerProfileByIds(ctx, user, channel.Server)
+	if err := m.roleChecker.Check(ctx, userId, server.Id, role_system.PERM_READ_MESSAGE_HISTORY); err == nil {
+		serverProfile, err := m.userRepo.FindServerProfileByIds(ctx, userId, server.Id)
 		if err != nil {
 			return nil, err
 		}
@@ -58,7 +70,7 @@ func (m *messageService) Find(ctx context.Context, user *entities.User, channel 
 	return messages, nil
 }
 
-func NewMessageService(repository message_repository.MessageRepository, roleChecker role_checker.RoleChecker) MessageService {
+func NewMessageService(repository repositories.MessageRepository, roleChecker role_checker.RoleChecker) MessageService {
 	return &messageService{
 		messageRepo: repository,
 		roleChecker: roleChecker,

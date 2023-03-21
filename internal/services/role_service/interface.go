@@ -6,8 +6,8 @@ import (
 )
 
 type RoleService interface {
-	Create(ctx context.Context, role *entities.Role, user *entities.User) error
-	Delete(ctx context.Context, role *entities.Role, user *entities.User) error
-	Change(ctx context.Context, role *entities.Role, user *entities.User) error
-	FindByServer(ctx context.Context, server *entities.Server, user *entities.User) ([]*entities.Role, error)
+	Create(ctx context.Context, role *entities.Role, userId entities.UserId, serverId entities.ServerId) error
+	Delete(ctx context.Context, roleId entities.RoleId, userId entities.UserId, serverId entities.ServerId) error
+	Change(ctx context.Context, role *entities.Role, userId entities.UserId, serverId entities.ServerId) error
+	FindByServer(ctx context.Context, serverId entities.ServerId, userId entities.UserId) ([]entities.Role, error)
 }

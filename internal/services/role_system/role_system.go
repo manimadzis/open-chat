@@ -3,12 +3,11 @@ package role_system
 import "open-chat/internal/entities"
 
 type roleSystem struct {
-	roles           []entities.Role
-	totalPermission entities.Permission
+	totalPermission entities.PermissionValue
 }
 
-func (r roleSystem) Check(permissions ...entities.Permission) error {
-	sumPermission := entities.Permission(0)
+func (r roleSystem) Check(permissions ...entities.PermissionValue) error {
+	sumPermission := entities.PermissionValue(0)
 	for _, permission := range permissions {
 		sumPermission |= permission
 	}
@@ -21,12 +20,11 @@ func (r roleSystem) Check(permissions ...entities.Permission) error {
 
 func NewRoleSystem(roles []entities.Role) RoleSystem {
 	rs := roleSystem{
-		roles:           roles,
-		totalPermission: entities.Permission(0),
+		totalPermission: entities.PermissionValue(0),
 	}
 
 	for _, role := range roles {
-		rs.totalPermission |= role.Permission
+		rs.totalPermission |= role.PermissionValue
 	}
 	return rs
 }

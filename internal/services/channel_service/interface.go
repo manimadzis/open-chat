@@ -6,7 +6,7 @@ import (
 )
 
 type ChannelService interface {
-	Create(ctx context.Context, channel *entities.Channel, user *entities.User) error
-	Delete(ctx context.Context, channel *entities.Channel, user *entities.User) error
-	FindByServer(ctx context.Context, server *entities.Server, user *entities.User) ([]*entities.Channel, error)
+	Create(ctx context.Context, channel *entities.Channel, userId entities.UserId) error
+	Delete(ctx context.Context, channelId entities.ChannelId, userId entities.UserId) error
+	FindByServerId(ctx context.Context, serverId entities.ServerId) ([]entities.Channel, error)
 }

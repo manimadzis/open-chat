@@ -3,13 +3,13 @@ package server_service
 import (
 	"context"
 	"open-chat/internal/entities"
-	"open-chat/internal/repositories/server_repository"
+	"open-chat/internal/repositories"
 	"open-chat/internal/services/role_checker"
 	"open-chat/internal/services/role_system"
 )
 
 type serverService struct {
-	serverRepo  server_repository.ServerRepository
+	serverRepo  repositories.ServerRepository
 	roleChecker role_checker.RoleChecker
 }
 
@@ -41,7 +41,7 @@ func (s *serverService) Kick(ctx context.Context, server *entities.Server, user 
 	return s.serverRepo.Join(ctx, server, user)
 }
 
-func NewServerService(serverRepository server_repository.ServerRepository, roleChecker role_checker.RoleChecker) ServerService {
+func NewServerService(serverRepository repositories.ServerRepository, roleChecker role_checker.RoleChecker) ServerService {
 	return &serverService{
 		serverRepo:  serverRepository,
 		roleChecker: roleChecker,
