@@ -1,4 +1,4 @@
-package repositories
+package services
 
 import (
 	"errors"
@@ -18,4 +18,8 @@ var (
 	ErrTokenAlreadyExists    = errors.New("token already exists")
 	ErrUserDoesntHaveSession = errors.New("user doesn't have session")
 	ErrNoSuchLogin           = errors.New("no such login")
+	ErrNoSuchServerProfile   = errors.New("no such server profile")
+	ErrLoginAlreadyExists    = errors.New("login already exists")
+	ErrInvalidCredentials    = errors.New("invalid credentials")
+	ErrNotEnoughPermissions  = errors.New("not enough permissions")
 )
