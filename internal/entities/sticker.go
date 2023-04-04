@@ -11,8 +11,3 @@ type Sticker struct {
 	URL string
 	StickerPackId
 }
-
-type StickerView struct {
-	Id  StickerId `json:"id"`
-	URL string    `json:"url"`
-}

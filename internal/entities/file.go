@@ -6,8 +6,3 @@ type File struct {
 	Path      string
 	CreatorId UserId
 }
-
-type FileView struct {
-	Id   FileId `json:"id"`
-	Path string `json:"path"`
-}

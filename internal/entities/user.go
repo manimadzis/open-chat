@@ -9,8 +9,3 @@ type User struct {
 	Nickname         string
 	RegistrationTime time.Time
 }
-
-type UserView struct {
-	Id       UserId `json:"id"`
-	Nickname string `json:"nickname"`
-}

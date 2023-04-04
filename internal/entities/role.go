@@ -12,15 +12,6 @@ type Role struct {
 	Permissions     []Permission
 }
 
-type RoleView struct {
-	Id              RoleId          `json:"id"`
-	Name            string          `json:"name"`
-	PermissionValue PermissionValue `json:"permission-value"`
-	CreatedAt       time.Time       `json:"create-at"`
-	Permissions     []Permission    `json:"permissions"`
-	Creator         *User           `json:"creator"`
-}
-
 func NewRoleByPermissions(permissions ...Permission) Role {
 	r := Role{}
 	for _, perm := range permissions {
