@@ -104,60 +104,6 @@ func (_m *ServerRepository) FindByMessageId(ctx context.Context, messageId entit
 	return r0, r1
 }
 
-// FindServerProfileByIds provides a mock function with given fields: ctx, serverId, userId
-func (_m *ServerRepository) FindServerProfileByIds(ctx context.Context, serverId entities.ServerId, userId entities.UserId) (*entities.ServerProfile, error) {
-	ret := _m.Called(ctx, serverId, userId)
-
-	var r0 *entities.ServerProfile
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, entities.ServerId, entities.UserId) (*entities.ServerProfile, error)); ok {
-		return rf(ctx, serverId, userId)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, entities.ServerId, entities.UserId) *entities.ServerProfile); ok {
-		r0 = rf(ctx, serverId, userId)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*entities.ServerProfile)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(context.Context, entities.ServerId, entities.UserId) error); ok {
-		r1 = rf(ctx, serverId, userId)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// Join provides a mock function with given fields: ctx, serverId, userId
-func (_m *ServerRepository) Join(ctx context.Context, serverId entities.ServerId, userId entities.UserId) error {
-	ret := _m.Called(ctx, serverId, userId)
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, entities.ServerId, entities.UserId) error); ok {
-		r0 = rf(ctx, serverId, userId)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
-// Kick provides a mock function with given fields: ctx, serverId, userId
-func (_m *ServerRepository) Kick(ctx context.Context, serverId entities.ServerId, userId entities.UserId) error {
-	ret := _m.Called(ctx, serverId, userId)
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, entities.ServerId, entities.UserId) error); ok {
-		r0 = rf(ctx, serverId, userId)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
 type mockConstructorTestingTNewServerRepository interface {
 	mock.TestingT
 	Cleanup(func())

@@ -8,9 +8,10 @@ import (
 )
 
 type messageService struct {
-	messageRepo          services.MessageRepository
-	serverRepo           services.ServerRepository
-	serverProfileChecker services.ServerProfileChecker
+	messageRepo       services.MessageRepository
+	serverRepo        services.ServerRepository
+	serverProfileRepo services.ServerProfileRepository
+	permissionChecker services.PermissionChecker
 }
 
 func (m *messageService) Send(
@@ -21,7 +22,7 @@ func (m *messageService) Send(
 	if err != nil {
 		return 0, err
 	}
-	if err := m.serverProfileChecker.Check(
+	if err := m.permissionChecker.Check(
 		ctx,
 		message.SenderId,
 		server.Id,
@@ -41,7 +42,7 @@ func (m *messageService) Delete(
 	if err != nil {
 		return err
 	}
-	if err := m.serverProfileChecker.Check(
+	if err := m.permissionChecker.Check(
 		ctx,
 		userId,
 		server.Id,
@@ -62,7 +63,7 @@ func (m *messageService) FindInChat(
 	if err != nil {
 		return nil, err
 	}
-	if err := m.serverProfileChecker.Check(
+	if err := m.permissionChecker.Check(
 		ctx,
 		userId,
 		server.Id,
@@ -71,7 +72,7 @@ func (m *messageService) FindInChat(
 		return nil, err
 	}
 
-	messages, err := m.messageRepo.FindByChannel(
+	messages, err := m.messageRepo.FindByChannelId(
 		ctx,
 		channelId,
 		filters.Offset,
@@ -81,16 +82,18 @@ func (m *messageService) FindInChat(
 		return nil, err
 	}
 
-	if err := m.serverProfileChecker.Check(
+	if err := m.permissionChecker.Check(
 		ctx,
 		userId,
 		server.Id,
 		role_system.PERM_READ_MESSAGE_HISTORY,
 	); err != nil {
-		serverProfile, err := m.serverRepo.FindServerProfileByIds(
+		serverProfile, err := m.serverProfileRepo.FindById(
 			ctx,
-			server.Id,
-			userId,
+			entities.ServerProfileId{
+				UserId:   userId,
+				ServerId: server.Id,
+			},
 		)
 		if err != nil {
 			return nil, err
@@ -112,11 +115,13 @@ func (m *messageService) FindInChat(
 func NewMessageService(
 	messageRepo services.MessageRepository,
 	serverRepo services.ServerRepository,
-	serverProfileChecker services.ServerProfileChecker,
+	serverProfileRepo services.ServerProfileRepository,
+	permissionChecker services.PermissionChecker,
 ) services.MessageService {
 	return &messageService{
-		messageRepo:          messageRepo,
-		serverRepo:           serverRepo,
-		serverProfileChecker: serverProfileChecker,
+		messageRepo:       messageRepo,
+		serverRepo:        serverRepo,
+		serverProfileRepo: serverProfileRepo,
+		permissionChecker: permissionChecker,
 	}
 }

@@ -8,15 +8,15 @@ import (
 )
 
 type roleService struct {
-	roleRepo             services.RoleRepository
-	serverProfileChecker services.ServerProfileChecker
+	roleRepo          services.RoleRepository
+	permissionChecker services.PermissionChecker
 }
 
 func (r *roleService) Create(
 	ctx context.Context,
 	role entities.Role,
 ) (entities.RoleId, error) {
-	if err := r.serverProfileChecker.Check(
+	if err := r.permissionChecker.Check(
 		ctx,
 		role.CreatorId,
 		role.ServerId,
@@ -33,7 +33,7 @@ func (r *roleService) Delete(
 	userId entities.UserId,
 	serverId entities.ServerId,
 ) error {
-	if err := r.serverProfileChecker.Check(
+	if err := r.permissionChecker.Check(
 		ctx,
 		userId,
 		serverId,
@@ -50,7 +50,7 @@ func (r *roleService) Change(
 	userId entities.UserId,
 	serverId entities.ServerId,
 ) error {
-	if err := r.serverProfileChecker.Check(
+	if err := r.permissionChecker.Check(
 		ctx,
 		userId,
 		serverId,
@@ -66,7 +66,7 @@ func (r *roleService) FindByServer(
 	serverId entities.ServerId,
 	userId entities.UserId,
 ) ([]entities.Role, error) {
-	if err := r.serverProfileChecker.Check(
+	if err := r.permissionChecker.Check(
 		ctx,
 		userId,
 		serverId,
@@ -78,10 +78,10 @@ func (r *roleService) FindByServer(
 
 func NewRoleService(
 	repository services.RoleRepository,
-	serverProfileChecker services.ServerProfileChecker,
+	permissionChecker services.PermissionChecker,
 ) services.RoleService {
 	return &roleService{
-		roleRepo:             repository,
-		serverProfileChecker: serverProfileChecker,
+		roleRepo:          repository,
+		permissionChecker: permissionChecker,
 	}
 }

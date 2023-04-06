@@ -59,7 +59,7 @@ func (m messageRepo) Delete(ctx context.Context, messageId entities.MessageId) e
 	return nil
 }
 
-func (m messageRepo) FindByChannel(ctx context.Context,
+func (m messageRepo) FindByChannelId(ctx context.Context,
 	channelId entities.ChannelId,
 	offset, count uint64,
 ) ([]entities.Message, error) {

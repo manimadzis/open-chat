@@ -20,22 +20,29 @@ func TestMessageService_Send(t *testing.T) {
 	server := &entities.Server{}
 	messageId := entities.MessageId(10)
 
-	serverProfileChecker := smock.NewServerProfileChecker(t)
+	permissionChecker := smock.NewPermissionChecker(t)
 	serverRepo := rmock.NewServerRepository(t)
 	messageRepo := rmock.NewMessageRepository(t)
-	messageService := message_service.NewMessageService(messageRepo, serverRepo, serverProfileChecker)
+	serverProfileRepo := rmock.NewServerProfileRepository(t)
 
-	t.Run("Enough permissions", func(t *testing.T) {
-		serverProfileChecker.ExpectedCalls = nil
+	clearMocks := func() {
+		permissionChecker.ExpectedCalls = nil
 		serverRepo.ExpectedCalls = nil
 		messageRepo.ExpectedCalls = nil
+		serverProfileRepo.ExpectedCalls = nil
+	}
+
+	messageService := message_service.NewMessageService(messageRepo, serverRepo, serverProfileRepo, permissionChecker)
+
+	t.Run("Enough permissions", func(t *testing.T) {
+		clearMocks()
 
 		serverRepo.
 			On("FindByChannelId", ctx, message.ChannelId).
 			Return(server, nil).
 			Once()
 
-		serverProfileChecker.
+		permissionChecker.
 			On(
 				"Check",
 				ctx,
@@ -58,7 +65,7 @@ func TestMessageService_Send(t *testing.T) {
 
 	t.Run(
 		"Not enough permissions", func(t *testing.T) {
-			serverProfileChecker.ExpectedCalls = nil
+			permissionChecker.ExpectedCalls = nil
 			serverRepo.ExpectedCalls = nil
 			messageRepo.ExpectedCalls = nil
 
@@ -67,7 +74,7 @@ func TestMessageService_Send(t *testing.T) {
 				Return(server, nil).
 				Once()
 
-			serverProfileChecker.
+			permissionChecker.
 				On(
 					"Check",
 					ctx,
@@ -85,7 +92,7 @@ func TestMessageService_Send(t *testing.T) {
 
 	t.Run(
 		"No server profile", func(t *testing.T) {
-			serverProfileChecker.ExpectedCalls = nil
+			permissionChecker.ExpectedCalls = nil
 			serverRepo.ExpectedCalls = nil
 			messageRepo.ExpectedCalls = nil
 
@@ -107,53 +114,59 @@ func TestMessageService_Delete(t *testing.T) {
 	userId := entities.UserId(1112)
 	server := &entities.Server{}
 
-	serverProfileChecker := smock.NewServerProfileChecker(t)
+	permissionChecker := smock.NewPermissionChecker(t)
 	serverRepo := rmock.NewServerRepository(t)
 	messageRepo := rmock.NewMessageRepository(t)
-	messageService := message_service.NewMessageService(messageRepo, serverRepo, serverProfileChecker)
+	serverProfileRepo := rmock.NewServerProfileRepository(t)
 
-	t.Run("Enough permissions", func(t *testing.T) {
-		serverProfileChecker.ExpectedCalls = nil
+	clearMocks := func() {
+		permissionChecker.ExpectedCalls = nil
 		serverRepo.ExpectedCalls = nil
 		messageRepo.ExpectedCalls = nil
+		serverProfileRepo.ExpectedCalls = nil
+	}
 
-		serverRepo.
-			On("FindByMessageId", ctx, messageId).
-			Return(server, nil).
-			Once()
+	messageService := message_service.NewMessageService(messageRepo, serverRepo, serverProfileRepo, permissionChecker)
 
-		serverProfileChecker.
-			On(
-				"Check",
-				ctx,
-				userId,
-				server.Id,
-				role_system.PERM_DELETE_MESSAGE,
-			).
-			Return(nil).
-			Once()
-
-		messageRepo.
-			On("Delete", ctx, messageId).
-			Return(nil)
-
-		err := messageService.Delete(ctx, messageId, userId)
-		require.Equal(t, nil, err)
-	},
-	)
-
-	t.Run(
-		"Not enough permissions", func(t *testing.T) {
-			serverProfileChecker.ExpectedCalls = nil
-			serverRepo.ExpectedCalls = nil
-			messageRepo.ExpectedCalls = nil
+	t.Run("Enough permissions",
+		func(t *testing.T) {
+			clearMocks()
 
 			serverRepo.
 				On("FindByMessageId", ctx, messageId).
 				Return(server, nil).
 				Once()
 
-			serverProfileChecker.
+			permissionChecker.
+				On(
+					"Check",
+					ctx,
+					userId,
+					server.Id,
+					role_system.PERM_DELETE_MESSAGE,
+				).
+				Return(nil).
+				Once()
+
+			messageRepo.
+				On("Delete", ctx, messageId).
+				Return(nil)
+
+			err := messageService.Delete(ctx, messageId, userId)
+			require.Equal(t, nil, err)
+		},
+	)
+
+	t.Run("Not enough permissions",
+		func(t *testing.T) {
+			clearMocks()
+
+			serverRepo.
+				On("FindByMessageId", ctx, messageId).
+				Return(server, nil).
+				Once()
+
+			permissionChecker.
 				On(
 					"Check",
 					ctx,
@@ -169,11 +182,9 @@ func TestMessageService_Delete(t *testing.T) {
 		},
 	)
 
-	t.Run(
-		"No server profile", func(t *testing.T) {
-			serverProfileChecker.ExpectedCalls = nil
-			serverRepo.ExpectedCalls = nil
-			messageRepo.ExpectedCalls = nil
+	t.Run("No server profile",
+		func(t *testing.T) {
+			clearMocks()
 
 			serverRepo.
 				On("FindByMessageId", ctx, messageId).
@@ -193,16 +204,22 @@ func TestMessageService_FindInChat(t *testing.T) {
 	filters := entities.MessageFiltersDTO{}
 	server := &entities.Server{}
 
-	serverProfileChecker := smock.NewServerProfileChecker(t)
+	permissionChecker := smock.NewPermissionChecker(t)
 	serverRepo := rmock.NewServerRepository(t)
 	messageRepo := rmock.NewMessageRepository(t)
+	serverProfileRepo := rmock.NewServerProfileRepository(t)
 
-	messageService := message_service.NewMessageService(messageRepo, serverRepo, serverProfileChecker)
-
-	t.Run("No channel", func(t *testing.T) {
-		serverProfileChecker.ExpectedCalls = nil
+	clearMocks := func() {
+		permissionChecker.ExpectedCalls = nil
 		serverRepo.ExpectedCalls = nil
 		messageRepo.ExpectedCalls = nil
+		serverProfileRepo.ExpectedCalls = nil
+	}
+
+	messageService := message_service.NewMessageService(messageRepo, serverRepo, serverProfileRepo, permissionChecker)
+
+	t.Run("No channel", func(t *testing.T) {
+		clearMocks()
 
 		serverRepo.
 			On("FindByChannelId", ctx, channelId).
@@ -215,16 +232,14 @@ func TestMessageService_FindInChat(t *testing.T) {
 	)
 
 	t.Run("No permissions", func(t *testing.T) {
-		serverProfileChecker.ExpectedCalls = nil
-		serverRepo.ExpectedCalls = nil
-		messageRepo.ExpectedCalls = nil
+		clearMocks()
 
 		serverRepo.
 			On("FindByChannelId", ctx, channelId).
 			Return(server, nil).
 			Once()
 
-		serverProfileChecker.
+		permissionChecker.
 			On("Check", ctx, userId, server.Id, role_system.PERM_READ_MESSAGE).
 			Return(services.ErrNotEnoughPermissions).
 			Once()
@@ -235,22 +250,21 @@ func TestMessageService_FindInChat(t *testing.T) {
 	)
 
 	t.Run("message repo error", func(t *testing.T) {
-		serverProfileChecker.ExpectedCalls = nil
-		serverRepo.ExpectedCalls = nil
-		messageRepo.ExpectedCalls = nil
+		clearMocks()
+
 		e := errors.New("some error")
 		serverRepo.
 			On("FindByChannelId", ctx, channelId).
 			Return(server, nil).
 			Once()
 
-		serverProfileChecker.
+		permissionChecker.
 			On("Check", ctx, userId, server.Id, role_system.PERM_READ_MESSAGE).
 			Return(nil).
 			Once()
 
 		messageRepo.
-			On("FindByChannel", ctx, channelId, filters.Offset, filters.Count).
+			On("FindByChannelId", ctx, channelId, filters.Offset, filters.Count).
 			Return(nil, e).
 			Once()
 
@@ -260,26 +274,24 @@ func TestMessageService_FindInChat(t *testing.T) {
 	)
 
 	t.Run("has permission for history and success", func(t *testing.T) {
-		serverProfileChecker.ExpectedCalls = nil
-		serverRepo.ExpectedCalls = nil
-		messageRepo.ExpectedCalls = nil
+		clearMocks()
 
 		serverRepo.
 			On("FindByChannelId", ctx, channelId).
 			Return(server, nil).
 			Once()
 
-		serverProfileChecker.
+		permissionChecker.
 			On("Check", ctx, userId, server.Id, role_system.PERM_READ_MESSAGE).
 			Return(nil).
 			Once()
 
 		messageRepo.
-			On("FindByChannel", ctx, channelId, filters.Offset, filters.Count).
+			On("FindByChannelId", ctx, channelId, filters.Offset, filters.Count).
 			Return(nil, nil).
 			Once()
 
-		serverProfileChecker.
+		permissionChecker.
 			On("Check", ctx, userId, server.Id, role_system.PERM_READ_MESSAGE_HISTORY).
 			Return(nil).
 			Once()
@@ -290,9 +302,7 @@ func TestMessageService_FindInChat(t *testing.T) {
 	)
 
 	t.Run("No permission for history, but success", func(t *testing.T) {
-		serverProfileChecker.ExpectedCalls = nil
-		serverRepo.ExpectedCalls = nil
-		messageRepo.ExpectedCalls = nil
+		clearMocks()
 
 		ct := time.Now()
 
@@ -301,22 +311,22 @@ func TestMessageService_FindInChat(t *testing.T) {
 			Return(server, nil).
 			Once()
 
-		serverProfileChecker.
+		permissionChecker.
 			On("Check", ctx, userId, server.Id, role_system.PERM_READ_MESSAGE).
 			Return(nil).
 			Once()
 
 		messageRepo.
-			On("FindByChannel", ctx, channelId, filters.Offset, filters.Count).
+			On("FindByChannelId", ctx, channelId, filters.Offset, filters.Count).
 			Return([]entities.Message{{Time: ct}, {Time: ct.Add(100 * time.Minute)}}, nil).
 			Once()
 
-		serverProfileChecker.
+		permissionChecker.
 			On("Check", ctx, userId, server.Id, role_system.PERM_READ_MESSAGE_HISTORY).
 			Return(services.ErrNotEnoughPermissions).
 			Once()
-		serverRepo.
-			On("FindServerProfileByIds", ctx, server.Id, userId).
+		serverProfileRepo.
+			On("FindById", ctx, entities.ServerProfileId{ServerId: server.Id, UserId: userId}).
 			Return(&entities.ServerProfile{JoinTime: ct.Add(50 * time.Minute)}, nil).
 			Once()
 
@@ -326,31 +336,29 @@ func TestMessageService_FindInChat(t *testing.T) {
 	)
 
 	t.Run("No permission for history, but failed to get server profile", func(t *testing.T) {
-		serverProfileChecker.ExpectedCalls = nil
-		serverRepo.ExpectedCalls = nil
-		messageRepo.ExpectedCalls = nil
+		clearMocks()
 		e := errors.New("some error")
 		serverRepo.
 			On("FindByChannelId", ctx, channelId).
 			Return(server, nil).
 			Once()
 
-		serverProfileChecker.
+		permissionChecker.
 			On("Check", ctx, userId, server.Id, role_system.PERM_READ_MESSAGE).
 			Return(nil).
 			Once()
 
 		messageRepo.
-			On("FindByChannel", ctx, channelId, filters.Offset, filters.Count).
+			On("FindByChannelId", ctx, channelId, filters.Offset, filters.Count).
 			Return(nil, nil).
 			Once()
 
-		serverProfileChecker.
+		permissionChecker.
 			On("Check", ctx, userId, server.Id, role_system.PERM_READ_MESSAGE_HISTORY).
 			Return(services.ErrNotEnoughPermissions).
 			Once()
-		serverRepo.
-			On("FindServerProfileByIds", ctx, server.Id, userId).
+		serverProfileRepo.
+			On("FindById", ctx, entities.ServerProfileId{ServerId: server.Id, UserId: userId}).
 			Return(&entities.ServerProfile{}, e).
 			Once()
 

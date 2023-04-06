@@ -53,7 +53,7 @@ func (_m *MessageRepository) Delete(ctx context.Context, messageId entities.Mess
 }
 
 // FindByChannel provides a mock function with given fields: ctx, channelId, offset, count
-func (_m *MessageRepository) FindByChannel(ctx context.Context, channelId entities.ChannelId, offset uint64, count uint64) ([]entities.Message, error) {
+func (_m *MessageRepository) FindByChannelId(ctx context.Context, channelId entities.ChannelId, offset uint64, count uint64) ([]entities.Message, error) {
 	ret := _m.Called(ctx, channelId, offset, count)
 
 	var r0 []entities.Message

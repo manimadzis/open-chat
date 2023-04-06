@@ -21,16 +21,16 @@ func TestRoleService_Create(t *testing.T) {
 	}
 	roleId := entities.RoleId(543)
 
-	serverProfileChecker := smock.NewServerProfileChecker(t)
+	permissionChecker := smock.NewPermissionChecker(t)
 	roleRepo := rmock.NewRoleRepository(t)
-	roleService := role_service.NewRoleService(roleRepo, serverProfileChecker)
+	roleService := role_service.NewRoleService(roleRepo, permissionChecker)
 
 	t.Run("Enough permissions", func(t *testing.T) {
 		{
-			serverProfileChecker.ExpectedCalls = nil
+			permissionChecker.ExpectedCalls = nil
 			roleRepo.ExpectedCalls = nil
 
-			serverProfileChecker.
+			permissionChecker.
 				On(
 					"Check",
 					ctx,
@@ -50,10 +50,10 @@ func TestRoleService_Create(t *testing.T) {
 			require.Equal(t, nil, err)
 		}
 		{
-			serverProfileChecker.ExpectedCalls = nil
+			permissionChecker.ExpectedCalls = nil
 			roleRepo.ExpectedCalls = nil
 			expectedErr := services.NewUnknownError(errors.New("some happened"))
-			serverProfileChecker.
+			permissionChecker.
 				On(
 					"Check",
 					ctx,
@@ -78,10 +78,10 @@ func TestRoleService_Create(t *testing.T) {
 		"Not enough permissions", func(t *testing.T) {
 
 			{
-				serverProfileChecker.ExpectedCalls = nil
+				permissionChecker.ExpectedCalls = nil
 				roleRepo.ExpectedCalls = nil
 
-				serverProfileChecker.
+				permissionChecker.
 					On(
 						"Check",
 						ctx,
@@ -110,17 +110,17 @@ func TestRoleService_Delete(t *testing.T) {
 	userId := entities.UserId(333)
 	serverId := entities.ServerId(222)
 
-	serverProfileChecker := smock.NewServerProfileChecker(t)
+	permissionChecker := smock.NewPermissionChecker(t)
 	roleRepo := rmock.NewRoleRepository(t)
-	roleService := role_service.NewRoleService(roleRepo, serverProfileChecker)
+	roleService := role_service.NewRoleService(roleRepo, permissionChecker)
 
 	t.Run(
 		"Enough permissions", func(t *testing.T) {
 			{
-				serverProfileChecker.ExpectedCalls = nil
+				permissionChecker.ExpectedCalls = nil
 				roleRepo.ExpectedCalls = nil
 
-				serverProfileChecker.
+				permissionChecker.
 					On(
 						"Check",
 						ctx,
@@ -142,10 +142,10 @@ func TestRoleService_Delete(t *testing.T) {
 	)
 
 	t.Run("Not enough permissions", func(t *testing.T) {
-		serverProfileChecker.ExpectedCalls = nil
+		permissionChecker.ExpectedCalls = nil
 		roleRepo.ExpectedCalls = nil
 
-		serverProfileChecker.
+		permissionChecker.
 			On(
 				"Check",
 				ctx,
@@ -172,17 +172,17 @@ func TestRoleService_Change(t *testing.T) {
 	userId := entities.UserId(333)
 	serverId := entities.ServerId(222)
 
-	serverProfileChecker := smock.NewServerProfileChecker(t)
+	permissionChecker := smock.NewPermissionChecker(t)
 	roleRepo := rmock.NewRoleRepository(t)
-	roleService := role_service.NewRoleService(roleRepo, serverProfileChecker)
+	roleService := role_service.NewRoleService(roleRepo, permissionChecker)
 
 	t.Run(
 		"Enough permissions", func(t *testing.T) {
 			{
-				serverProfileChecker.ExpectedCalls = nil
+				permissionChecker.ExpectedCalls = nil
 				roleRepo.ExpectedCalls = nil
 
-				serverProfileChecker.
+				permissionChecker.
 					On(
 						"Check",
 						ctx,
@@ -204,10 +204,10 @@ func TestRoleService_Change(t *testing.T) {
 	)
 
 	t.Run("Not enough permissions", func(t *testing.T) {
-		serverProfileChecker.ExpectedCalls = nil
+		permissionChecker.ExpectedCalls = nil
 		roleRepo.ExpectedCalls = nil
 
-		serverProfileChecker.
+		permissionChecker.
 			On(
 				"Check",
 				ctx,
@@ -230,17 +230,17 @@ func TestRoleService_FindByServer(t *testing.T) {
 	userId := entities.UserId(333)
 	serverId := entities.ServerId(222)
 
-	serverProfileChecker := smock.NewServerProfileChecker(t)
+	permissionChecker := smock.NewPermissionChecker(t)
 	roleRepo := rmock.NewRoleRepository(t)
-	roleService := role_service.NewRoleService(roleRepo, serverProfileChecker)
+	roleService := role_service.NewRoleService(roleRepo, permissionChecker)
 
 	t.Run(
 		"Enough permissions", func(t *testing.T) {
 			{
-				serverProfileChecker.ExpectedCalls = nil
+				permissionChecker.ExpectedCalls = nil
 				roleRepo.ExpectedCalls = nil
 
-				serverProfileChecker.
+				permissionChecker.
 					On(
 						"Check",
 						ctx,
@@ -262,10 +262,10 @@ func TestRoleService_FindByServer(t *testing.T) {
 	)
 
 	t.Run("Not enough permissions", func(t *testing.T) {
-		serverProfileChecker.ExpectedCalls = nil
+		permissionChecker.ExpectedCalls = nil
 		roleRepo.ExpectedCalls = nil
 
-		serverProfileChecker.
+		permissionChecker.
 			On(
 				"Check",
 				ctx,

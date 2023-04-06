@@ -8,16 +8,16 @@ import (
 )
 
 type channelService struct {
-	channelRepo          services.ChannelRepository
-	serverProfileChecker services.ServerProfileChecker
-	serverRepo           services.ServerRepository
+	channelRepo       services.ChannelRepository
+	permissionChecker services.PermissionChecker
+	serverRepo        services.ServerRepository
 }
 
 func (s channelService) Create(
 	ctx context.Context,
 	channel entities.Channel,
 ) (entities.ChannelId, error) {
-	if err := s.serverProfileChecker.Check(
+	if err := s.permissionChecker.Check(
 		ctx,
 		channel.CreatorId,
 		channel.ServerId,
@@ -37,7 +37,7 @@ func (s channelService) Delete(
 	if err != nil {
 		return err
 	}
-	if err := s.serverProfileChecker.Check(
+	if err := s.permissionChecker.Check(
 		ctx,
 		userId,
 		server.Id,
@@ -53,7 +53,7 @@ func (s channelService) FindByServerId(
 	serverId entities.ServerId,
 	userId entities.UserId,
 ) ([]entities.Channel, error) {
-	if err := s.serverProfileChecker.Check(ctx, userId, serverId); err != nil {
+	if err := s.permissionChecker.Check(ctx, userId, serverId); err != nil {
 		return nil, err
 	}
 	return s.channelRepo.FindByServerId(ctx, serverId)
@@ -61,12 +61,12 @@ func (s channelService) FindByServerId(
 
 func NewChannelService(
 	channelRepo services.ChannelRepository,
-	serverProfileChecker services.ServerProfileChecker,
+	permissionChecker services.PermissionChecker,
 	serverRepo services.ServerRepository,
 ) services.ChannelService {
 	return &channelService{
-		channelRepo:          channelRepo,
-		serverProfileChecker: serverProfileChecker,
-		serverRepo:           serverRepo,
+		channelRepo:       channelRepo,
+		permissionChecker: permissionChecker,
+		serverRepo:        serverRepo,
 	}
 }

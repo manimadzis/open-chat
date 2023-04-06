@@ -1,4 +1,4 @@
-package server_profile_checker
+package permission_checker
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 )
 
 func TestRoleChecker_Check(t *testing.T) {
-	serverRepo := rmock.NewServerRepository(t)
+	serverProfileRepo := rmock.NewServerProfileRepository(t)
 	roleSystem := smock.NewRoleSystem(t)
 
 	ctx := context.Background()
@@ -21,27 +21,27 @@ func TestRoleChecker_Check(t *testing.T) {
 
 	t.Run("User doesn't have server profile",
 		func(t *testing.T) {
-			serverRepo.ExpectedCalls = nil
+			serverProfileRepo.ExpectedCalls = nil
 			roleSystem.ExpectedCalls = nil
-			serverProfileChecker := NewServerProfileChecker(serverRepo, roleSystem)
+			permissionChecker := NewPermissionChecker(serverProfileRepo, roleSystem)
 
-			serverRepo.
-				On("FindServerProfileByIds", ctx, serverId, userId).
+			serverProfileRepo.
+				On("FindById", ctx, entities.ServerProfileId{ServerId: serverId, UserId: userId}).
 				Return(serverProfile, services.ErrNoSuchServerProfile)
 
-			err := serverProfileChecker.Check(ctx, userId, serverId)
+			err := permissionChecker.Check(ctx, userId, serverId)
 			require.Equal(t, services.ErrNoSuchServerProfile, err)
 		},
 	)
 
 	t.Run("User doesn't have enough permissions",
 		func(t *testing.T) {
-			serverRepo.ExpectedCalls = nil
+			serverProfileRepo.ExpectedCalls = nil
 			roleSystem.ExpectedCalls = nil
 
-			serverProfileChecker := NewServerProfileChecker(serverRepo, roleSystem)
-			serverRepo.
-				On("FindServerProfileByIds", ctx, serverId, userId).
+			permissionChecker := NewPermissionChecker(serverProfileRepo, roleSystem)
+			serverProfileRepo.
+				On("FindById", ctx, entities.ServerProfileId{ServerId: serverId, UserId: userId}).
 				Return(serverProfile, nil)
 
 			roleSystem.
@@ -54,19 +54,19 @@ func TestRoleChecker_Check(t *testing.T) {
 				Return(services.ErrNotEnoughPermissions).
 				Once()
 
-			err := serverProfileChecker.Check(ctx, userId, serverId)
+			err := permissionChecker.Check(ctx, userId, serverId)
 			require.Equal(t, services.ErrNotEnoughPermissions, err)
 		},
 	)
 
 	t.Run("User have enough permissions",
 		func(t *testing.T) {
-			serverRepo.ExpectedCalls = nil
+			serverProfileRepo.ExpectedCalls = nil
 			roleSystem.ExpectedCalls = nil
 
-			serverProfileChecker := NewServerProfileChecker(serverRepo, roleSystem)
-			serverRepo.
-				On("FindServerProfileByIds", ctx, serverId, userId).
+			permissionChecker := NewPermissionChecker(serverProfileRepo, roleSystem)
+			serverProfileRepo.
+				On("FindById", ctx, entities.ServerProfileId{ServerId: serverId, UserId: userId}).
 				Return(serverProfile, nil)
 
 			roleSystem.
@@ -79,7 +79,7 @@ func TestRoleChecker_Check(t *testing.T) {
 				Return(nil).
 				Once()
 
-			err := serverProfileChecker.Check(ctx, userId, serverId)
+			err := permissionChecker.Check(ctx, userId, serverId)
 			require.Equal(t, nil, err)
 		},
 	)

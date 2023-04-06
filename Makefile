@@ -10,10 +10,11 @@ gen-repo-mocks:
 	mockery --dir internal/services/ --output internal/mocks/repositories --name ServerRepository
 	mockery --dir internal/services/ --output internal/mocks/repositories --name UserRepository
 	mockery --dir internal/services/ --output internal/mocks/repositories --name SessionRepository
+	mockery --dir internal/services/ --output internal/mocks/repositories --name ServerProfileRepository
 
 gen-service-mocks:
 	mockery --dir internal/services/ --name RoleService --output internal/mocks/services
-	mockery --dir internal/services/ --name ServerProfileChecker --output internal/mocks/services
+	mockery --dir internal/services/ --name PermissionChecker --output internal/mocks/services
 	mockery --dir internal/services/ --name RoleSystem --output internal/mocks/services
 
 
@@ -37,8 +38,8 @@ test-role-service:
 test-role-system:
 	go test ./internal/services/role_system -coverprofile cover.out && go tool cover -func cover.out && rm cover.out
 
-test-server-profile-checker:
-	go test ./internal/services/server_profile_checker -coverprofile cover.out && go tool cover -func cover.out && rm cover.out
+test-permission-checker:
+	go test ./internal/services/permission_checker -coverprofile cover.out && go tool cover -func cover.out && rm cover.out
 
 test-server-service:
 	go test ./internal/services/server_service -coverprofile cover.out && go tool cover -func cover.out && rm cover.out
@@ -49,7 +50,7 @@ test-all:
 	make test-channel-service
 	make test-role-service
 	make test-role-system
-	make test-server-profile-checker
+	make test-permission-checker
 	make test-server-service
 
 

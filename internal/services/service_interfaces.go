@@ -48,7 +48,7 @@ type RoleService interface {
 	FindByServer(ctx context.Context, serverId entities.ServerId, userId entities.UserId) ([]entities.Role, error)
 }
 
-type ServerProfileChecker interface {
+type PermissionChecker interface {
 	// Check returns ErrNoSuchServerProfile if user doesn't have server profile.
 	// If user doesn't have enough permissions it returns ErrNotEnoughPermissions.
 	// Could be used without permissions to check user has been joined the server

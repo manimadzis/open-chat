@@ -15,7 +15,7 @@ import (
 
 func TestChannelService_Create(t *testing.T) {
 	channelRepo := rmocks.NewChannelRepository(t)
-	serverProfileChecker := smocks.NewServerProfileChecker(t)
+	permissionChecker := smocks.NewPermissionChecker(t)
 	serverRepo := rmocks.NewServerRepository(t)
 
 	ctx := context.Background()
@@ -26,14 +26,14 @@ func TestChannelService_Create(t *testing.T) {
 	t.Run(
 		"successfully create channel", func(t *testing.T) {
 			channelRepo.ExpectedCalls = nil
-			serverProfileChecker.ExpectedCalls = nil
+			permissionChecker.ExpectedCalls = nil
 			serverRepo.ExpectedCalls = nil
 
 			channelRepo.
 				On("Create", ctx, channel).
 				Return(channel.Id, nil).
 				Once()
-			serverProfileChecker.
+			permissionChecker.
 				On(
 					"Check",
 					ctx,
@@ -44,7 +44,7 @@ func TestChannelService_Create(t *testing.T) {
 				Return(nil)
 			channelService := channel_service.NewChannelService(
 				channelRepo,
-				serverProfileChecker,
+				permissionChecker,
 				serverRepo,
 			)
 
@@ -56,10 +56,10 @@ func TestChannelService_Create(t *testing.T) {
 	t.Run(
 		"not enough permissions", func(t *testing.T) {
 			channelRepo.ExpectedCalls = nil
-			serverProfileChecker.ExpectedCalls = nil
+			permissionChecker.ExpectedCalls = nil
 			serverRepo.ExpectedCalls = nil
 
-			serverProfileChecker.
+			permissionChecker.
 				On(
 					"Check",
 					ctx,
@@ -71,7 +71,7 @@ func TestChannelService_Create(t *testing.T) {
 
 			channelService := channel_service.NewChannelService(
 				channelRepo,
-				serverProfileChecker,
+				permissionChecker,
 				serverRepo,
 			)
 
@@ -83,11 +83,11 @@ func TestChannelService_Create(t *testing.T) {
 	t.Run(
 		"channel repository failed", func(t *testing.T) {
 			channelRepo.ExpectedCalls = nil
-			serverProfileChecker.ExpectedCalls = nil
+			permissionChecker.ExpectedCalls = nil
 			serverRepo.ExpectedCalls = nil
 
 			expectedError := services.NewUnknownError(errors.New("some happened"))
-			serverProfileChecker.
+			permissionChecker.
 				On(
 					"Check",
 					ctx,
@@ -103,7 +103,7 @@ func TestChannelService_Create(t *testing.T) {
 
 			channelService := channel_service.NewChannelService(
 				channelRepo,
-				serverProfileChecker,
+				permissionChecker,
 				serverRepo,
 			)
 
@@ -115,7 +115,7 @@ func TestChannelService_Create(t *testing.T) {
 
 func TestChannelService_Delete(t *testing.T) {
 	channelRepo := rmocks.NewChannelRepository(t)
-	serverProfileChecker := smocks.NewServerProfileChecker(t)
+	permissionChecker := smocks.NewPermissionChecker(t)
 	serverRepo := rmocks.NewServerRepository(t)
 
 	ctx := context.Background()
@@ -127,7 +127,7 @@ func TestChannelService_Delete(t *testing.T) {
 	t.Run("successfully delete channel",
 		func(t *testing.T) {
 			channelRepo.ExpectedCalls = nil
-			serverProfileChecker.ExpectedCalls = nil
+			permissionChecker.ExpectedCalls = nil
 			serverRepo.ExpectedCalls = nil
 
 			channelRepo.
@@ -135,7 +135,7 @@ func TestChannelService_Delete(t *testing.T) {
 				Return(nil).
 				Once()
 
-			serverProfileChecker.
+			permissionChecker.
 				On(
 					"Check",
 					ctx,
@@ -151,7 +151,7 @@ func TestChannelService_Delete(t *testing.T) {
 
 			channelService := channel_service.NewChannelService(
 				channelRepo,
-				serverProfileChecker,
+				permissionChecker,
 				serverRepo,
 			)
 
@@ -163,14 +163,14 @@ func TestChannelService_Delete(t *testing.T) {
 	t.Run("not enough permissions",
 		func(t *testing.T) {
 			channelRepo.ExpectedCalls = nil
-			serverProfileChecker.ExpectedCalls = nil
+			permissionChecker.ExpectedCalls = nil
 			serverRepo.ExpectedCalls = nil
 
 			serverRepo.
 				On("FindByChannelId", ctx, channelId).
 				Return(server, nil)
 
-			serverProfileChecker.
+			permissionChecker.
 				On(
 					"Check",
 					ctx,
@@ -182,7 +182,7 @@ func TestChannelService_Delete(t *testing.T) {
 
 			channelService := channel_service.NewChannelService(
 				channelRepo,
-				serverProfileChecker,
+				permissionChecker,
 				serverRepo,
 			)
 
@@ -194,7 +194,7 @@ func TestChannelService_Delete(t *testing.T) {
 	t.Run("no such channel",
 		func(t *testing.T) {
 			channelRepo.ExpectedCalls = nil
-			serverProfileChecker.ExpectedCalls = nil
+			permissionChecker.ExpectedCalls = nil
 			serverRepo.ExpectedCalls = nil
 
 			serverRepo.
@@ -203,7 +203,7 @@ func TestChannelService_Delete(t *testing.T) {
 
 			channelService := channel_service.NewChannelService(
 				channelRepo,
-				serverProfileChecker,
+				permissionChecker,
 				serverRepo,
 			)
 
@@ -215,7 +215,7 @@ func TestChannelService_Delete(t *testing.T) {
 
 func TestChannelService_FindByServerId(t *testing.T) {
 	channelRepo := rmocks.NewChannelRepository(t)
-	serverProfileChecker := smocks.NewServerProfileChecker(t)
+	permissionChecker := smocks.NewPermissionChecker(t)
 	serverRepo := rmocks.NewServerRepository(t)
 
 	ctx := context.Background()
@@ -225,7 +225,7 @@ func TestChannelService_FindByServerId(t *testing.T) {
 	t.Run("found",
 		func(t *testing.T) {
 			channelRepo.ExpectedCalls = nil
-			serverProfileChecker.ExpectedCalls = nil
+			permissionChecker.ExpectedCalls = nil
 			serverRepo.ExpectedCalls = nil
 
 			channelRepo.
@@ -233,7 +233,7 @@ func TestChannelService_FindByServerId(t *testing.T) {
 				Return(nil, nil).
 				Once()
 
-			serverProfileChecker.
+			permissionChecker.
 				On(
 					"Check",
 					ctx,
@@ -243,7 +243,7 @@ func TestChannelService_FindByServerId(t *testing.T) {
 				Return(nil)
 			channelService := channel_service.NewChannelService(
 				channelRepo,
-				serverProfileChecker,
+				permissionChecker,
 				serverRepo,
 			)
 
@@ -254,10 +254,10 @@ func TestChannelService_FindByServerId(t *testing.T) {
 
 	t.Run("user doesn't have server profile", func(t *testing.T) {
 		channelRepo.ExpectedCalls = nil
-		serverProfileChecker.ExpectedCalls = nil
+		permissionChecker.ExpectedCalls = nil
 		serverRepo.ExpectedCalls = nil
 
-		serverProfileChecker.
+		permissionChecker.
 			On(
 				"Check",
 				ctx,
@@ -268,7 +268,7 @@ func TestChannelService_FindByServerId(t *testing.T) {
 
 		channelService := channel_service.NewChannelService(
 			channelRepo,
-			serverProfileChecker,
+			permissionChecker,
 			serverRepo,
 		)
 

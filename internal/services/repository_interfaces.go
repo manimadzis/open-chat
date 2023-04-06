@@ -23,8 +23,9 @@ type MessageRepository interface {
 	// Delete deletes message with given id. It returns ErrNoSuchMessage if given id doesn't exist.
 	Delete(ctx context.Context, messageId entities.MessageId) error
 
-	// FindByChannel returns slice of messages for given channel. If offset is too big it returns empty slice without errors.
-	FindByChannel(ctx context.Context, channelId entities.ChannelId, offset, count uint64) ([]entities.Message, error)
+	// FindByChannelId returns slice of messages for given channel.
+	// If offset is too big it returns empty slice without errors.
+	FindByChannelId(ctx context.Context, channelId entities.ChannelId, offset, count uint64) ([]entities.Message, error)
 }
 
 type RoleRepository interface {
@@ -55,17 +56,14 @@ type ServerRepository interface {
 }
 
 type ServerProfileRepository interface {
-	// CreateServerProfile returns ErrNoSuchUser if given user doesn't exist.
+	// Create returns ErrNoSuchUser if given user doesn't exist.
 	// If user already has profile if returns ErrUserAlreadyJoinedServer
-	CreateServerProfile(ctx context.Context, serverProfile entities.ServerProfile) (entities.ServerProfileId, error)
+	Create(ctx context.Context, serverProfile entities.ServerProfile) (entities.ServerProfileId, error)
 
 	Delete(ctx context.Context, serverProfileId entities.ServerProfileId) error
 
-	// FindServerProfileByIds returns ErrNoSuchServerProfile if given user doesn't have profile on the server (user didn't join).
-	FindServerProfileByIds(ctx context.Context,
-		serverId entities.ServerId,
-		userId entities.UserId,
-	) (*entities.ServerProfile, error)
+	// FindById returns ErrNoSuchServerProfile if given user doesn't have profile on the server (user didn't join).
+	FindById(ctx context.Context, serverProfileId entities.ServerProfileId) (*entities.ServerProfile, error)
 }
 
 type UserRepository interface {
