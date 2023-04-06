@@ -1,0 +1,7 @@
+psql -U postgres -d openchat -c '\copy "user" from 'migration/test/user.csv' csv header'
+psql -U postgres -d openchat -c '\copy "session" from 'migration/test/session.csv' csv header'
+psql -U postgres -d openchat -c '\copy "server" from 'migration/test/server.csv' csv header'
+psql -U postgres -d openchat -c '\copy "server_profile" from 'migration/test/server_profile.csv' csv header'
+psql -U postgres -d openchat -c '\copy "channel" from 'migration/test/channel.csv' csv header'
+psql -U postgres -d openchat -c '\copy "role" from 'migration/test/role.csv' csv header'
+psql -U postgres -d openchat -c '\copy "permission" from 'migration/test/permission.csv' csv header'

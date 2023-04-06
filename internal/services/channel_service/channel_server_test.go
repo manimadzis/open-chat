@@ -86,7 +86,7 @@ func TestChannelService_Create(t *testing.T) {
 			serverProfileChecker.ExpectedCalls = nil
 			serverRepo.ExpectedCalls = nil
 
-			expectedError := services.UnknownError(errors.New("some happened"))
+			expectedError := services.NewUnknownError(errors.New("some happened"))
 			serverProfileChecker.
 				On(
 					"Check",

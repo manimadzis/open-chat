@@ -54,4 +54,11 @@ test-all:
 
 
 
+drop-tables:
+	psql -U postgres -d openchat -c "$$(cat migration/drop_tables.sql)"
+
+load-test-data:
+	psql -U postgres -d openchat -c "$$(cat migration/test/load_test_data.psql)"
+
+
 

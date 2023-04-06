@@ -25,7 +25,7 @@ func (s *serverService) Create(
 		return 0, err
 	}
 
-	err = s.serverRepo.Join(ctx, server.Id, server.OwnerId)
+	err = s.serverRepo.CreateServerProfile(ctx, server.Id, server.OwnerId)
 
 	return server.Id, err
 }
@@ -59,7 +59,7 @@ func (s *serverService) Join(
 	); err != nil {
 		return err
 	}
-	return s.serverRepo.Join(ctx, serverId, userId)
+	return s.serverRepo.CreateServerProfile(ctx, serverId, userId)
 }
 
 func (s *serverService) Kick(

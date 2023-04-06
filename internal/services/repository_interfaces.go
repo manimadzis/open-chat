@@ -32,7 +32,7 @@ type RoleRepository interface {
 
 	Delete(ctx context.Context, roleId entities.RoleId) error
 
-	Change(ctx context.Context, role *entities.Role) error
+	Change(ctx context.Context, role entities.Role) error
 
 	// FindRolesByServerId returns role by server id. If no server with given id it returns ErrNoSuchServer
 	FindRolesByServerId(ctx context.Context, serverId entities.ServerId) ([]entities.Role, error)
@@ -44,14 +44,22 @@ type RoleRepository interface {
 type ServerRepository interface {
 	Create(ctx context.Context, server entities.Server) (entities.ServerId, error)
 
+	// Delete returns ErrNoSuchServer if given id doesn't exist
 	Delete(ctx context.Context, serverId entities.ServerId) error
 
-	Join(ctx context.Context, serverId entities.ServerId, userId entities.UserId) error
-	Kick(ctx context.Context, serverId entities.ServerId, userId entities.UserId) error
-
+	// FindByMessageId returns ErrNoSuchMessage if given id doesn't exist
 	FindByMessageId(ctx context.Context, messageId entities.MessageId) (*entities.Server, error)
+
 	// FindByChannelId returns ErrNoSuchChannel if channel doesn't exists
 	FindByChannelId(ctx context.Context, channelId entities.ChannelId) (*entities.Server, error)
+}
+
+type ServerProfileRepository interface {
+	// CreateServerProfile returns ErrNoSuchUser if given user doesn't exist.
+	// If user already has profile if returns ErrUserAlreadyJoinedServer
+	CreateServerProfile(ctx context.Context, serverProfile entities.ServerProfile) (entities.ServerProfileId, error)
+
+	Delete(ctx context.Context, serverProfileId entities.ServerProfileId) error
 
 	// FindServerProfileByIds returns ErrNoSuchServerProfile if given user doesn't have profile on the server (user didn't join).
 	FindServerProfileByIds(ctx context.Context,
@@ -63,7 +71,7 @@ type ServerRepository interface {
 type UserRepository interface {
 	// Create returns ErrLoginAlreadyExists if login already exists.
 	Create(ctx context.Context, user entities.User) (entities.UserId, error)
-
+	// FindById returns ErrNoSuchUser if user not found.
 	FindById(ctx context.Context, userId entities.UserId) (*entities.User, error)
 
 	// FindByLogin returns ErrNoSuchLogin if given login doesn't exist.
@@ -79,7 +87,11 @@ type SessionRepository interface {
 
 	// FindByToken find session by token. If no session found by token it returns ErrNoSuchToken
 	FindByToken(ctx context.Context, session entities.SessionToken) (*entities.Session, error)
+}
 
-	// FindByUserId find session by user id. If no session found it returns ErrUserDoesntHaveSession
-	FindByUserId(ctx context.Context, session *entities.Session) (*entities.Session, error)
+type StickerRepository interface {
+	CreateStickerPack(ctx context.Context, stickerPack entities.StickerPack) (entities.StickerPackId, error)
+	DeleteStickerPack(ctx context.Context, stickerPackId entities.StickerPackId) error
+	FindStickersByStickerPackId(ctx context.Context, stickerPackId entities.StickerPackId) ([]entities.Sticker, error)
+	FindStickerPacksByName(ctx context.Context, stickerPackName string) ([]entities.StickerPack, error)
 }

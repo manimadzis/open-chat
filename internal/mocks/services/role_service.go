@@ -15,11 +15,11 @@ type RoleService struct {
 }
 
 // Change provides a mock function with given fields: ctx, role, userId, serverId
-func (_m *RoleService) Change(ctx context.Context, role *entities.Role, userId entities.UserId, serverId entities.ServerId) error {
+func (_m *RoleService) Change(ctx context.Context, role entities.Role, userId entities.UserId, serverId entities.ServerId) error {
 	ret := _m.Called(ctx, role, userId, serverId)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *entities.Role, entities.UserId, entities.ServerId) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, entities.Role, entities.UserId, entities.ServerId) error); ok {
 		r0 = rf(ctx, role, userId, serverId)
 	} else {
 		r0 = ret.Error(0)

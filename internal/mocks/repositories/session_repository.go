@@ -68,32 +68,6 @@ func (_m *SessionRepository) FindByToken(ctx context.Context, session entities.S
 	return r0, r1
 }
 
-// FindByUserId provides a mock function with given fields: ctx, session
-func (_m *SessionRepository) FindByUserId(ctx context.Context, session *entities.Session) (*entities.Session, error) {
-	ret := _m.Called(ctx, session)
-
-	var r0 *entities.Session
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *entities.Session) (*entities.Session, error)); ok {
-		return rf(ctx, session)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, *entities.Session) *entities.Session); ok {
-		r0 = rf(ctx, session)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*entities.Session)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(context.Context, *entities.Session) error); ok {
-		r1 = rf(ctx, session)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 type mockConstructorTestingTNewSessionRepository interface {
 	mock.TestingT
 	Cleanup(func())

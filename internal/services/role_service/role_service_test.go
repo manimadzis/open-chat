@@ -52,7 +52,7 @@ func TestRoleService_Create(t *testing.T) {
 		{
 			serverProfileChecker.ExpectedCalls = nil
 			roleRepo.ExpectedCalls = nil
-			expectedErr := services.UnknownError(errors.New("some happened"))
+			expectedErr := services.NewUnknownError(errors.New("some happened"))
 			serverProfileChecker.
 				On(
 					"Check",
@@ -165,7 +165,7 @@ func TestRoleService_Delete(t *testing.T) {
 func TestRoleService_Change(t *testing.T) {
 	ctx := context.Background()
 
-	role := &entities.Role{
+	role := entities.Role{
 		Id:   123,
 		Name: "",
 	}

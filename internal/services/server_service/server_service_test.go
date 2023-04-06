@@ -47,7 +47,7 @@ func TestServerService_Create(t *testing.T) {
 				Return(server.Id, nil).
 				Once()
 			serverRepo.
-				On("Join", ctx, server.Id, server.OwnerId).
+				On("CreateServerProfile", ctx, server.Id, server.OwnerId).
 				Return(nil)
 
 			servId, err := serverService.Create(ctx, server)
@@ -131,7 +131,7 @@ func TestServerService_Join(t *testing.T) {
 				On("Check", ctx, userId, serverId, role_system.PERM_INVITE_USER).
 				Return(nil)
 			serverRepo.
-				On("Join", ctx, serverId, userId).
+				On("CreateServerProfile", ctx, serverId, userId).
 				Return(nil)
 
 			err := serverService.Join(ctx, serverId, userId)

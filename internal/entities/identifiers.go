@@ -8,3 +8,7 @@ type StickerPackId uint64
 type FileId uint64
 type MessageId uint64
 type UserId uint64
+type ServerProfileId struct {
+	UserId
+	ServerId
+}

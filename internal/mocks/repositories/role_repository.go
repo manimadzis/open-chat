@@ -15,11 +15,11 @@ type RoleRepository struct {
 }
 
 // Change provides a mock function with given fields: ctx, role
-func (_m *RoleRepository) Change(ctx context.Context, role *entities.Role) error {
+func (_m *RoleRepository) Change(ctx context.Context, role entities.Role) error {
 	ret := _m.Called(ctx, role)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *entities.Role) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, entities.Role) error); ok {
 		r0 = rf(ctx, role)
 	} else {
 		r0 = ret.Error(0)

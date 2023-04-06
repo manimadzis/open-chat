@@ -46,7 +46,7 @@ func (r *roleService) Delete(
 
 func (r *roleService) Change(
 	ctx context.Context,
-	role *entities.Role,
+	role entities.Role,
 	userId entities.UserId,
 	serverId entities.ServerId,
 ) error {

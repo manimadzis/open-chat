@@ -44,7 +44,7 @@ type MessageService interface {
 type RoleService interface {
 	Create(ctx context.Context, role entities.Role) (entities.RoleId, error)
 	Delete(ctx context.Context, roleId entities.RoleId, userId entities.UserId, serverId entities.ServerId) error
-	Change(ctx context.Context, role *entities.Role, userId entities.UserId, serverId entities.ServerId) error
+	Change(ctx context.Context, role entities.Role, userId entities.UserId, serverId entities.ServerId) error
 	FindByServer(ctx context.Context, serverId entities.ServerId, userId entities.UserId) ([]entities.Role, error)
 }
 
@@ -89,4 +89,10 @@ type AuthService interface {
 	SignIn(ctx context.Context, user entities.User) (*entities.Session, error)
 	LogOut(ctx context.Context, sessionToken entities.SessionToken) error
 	FindSessionByToken(ctx context.Context, sessionToken entities.SessionToken) (*entities.Session, error)
+}
+
+type StickerService interface {
+	CreateStickerPack(ctx context.Context, stickerPack entities.StickerPack) (entities.StickerPackId, error)
+	DeleteStickerPack(ctx context.Context, stickerPackId entities.StickerPackId) error
+	FindStickersByStickerPackId(ctx context.Context, stickerPackId entities.StickerPackId) ([]entities.Sticker, error)
 }
