@@ -57,9 +57,11 @@ type ServerRepository interface {
 
 type ServerProfileRepository interface {
 	// Create returns ErrNoSuchUser if given user doesn't exist.
-	// If user already has profile if returns ErrUserAlreadyJoinedServer
+	// If user already has profile if returns ErrServerProfileAlreadyExists
+	// If user or server doesn't exist if returns ErrNoSuchUser or ErrNoSuchServer
 	Create(ctx context.Context, serverProfile entities.ServerProfile) (entities.ServerProfileId, error)
 
+	// Delete returns ErrNoSuchServerProfile if server profile doesn't exist.
 	Delete(ctx context.Context, serverProfileId entities.ServerProfileId) error
 
 	// FindById returns ErrNoSuchServerProfile if given user doesn't have profile on the server (user didn't join).

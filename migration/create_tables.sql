@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS server_profile
     server_id BIGINT    NOT NULL REFERENCES server (id),
     user_id   BIGINT    NOT NULL REFERENCES "user" (id),
     join_time TIMESTAMP NOT NULL,
+    nickname  TEXT      NOT NULL,
     PRIMARY KEY (server_id, user_id)
 );
 

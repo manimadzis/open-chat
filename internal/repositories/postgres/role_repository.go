@@ -2,9 +2,7 @@ package postgres
 
 import (
 	"context"
-	"errors"
 	"github.com/jackc/pgx"
-	"log"
 	"open-chat/internal/entities"
 	"open-chat/internal/services"
 )
@@ -107,7 +105,9 @@ func (r roleRepository) Change(ctx context.Context, role entities.Role) error {
 			permission = $2
 			WHERE id = $3`
 	_, err := r.pool.ExecEx(ctx, sql, nil,
-		role.Name, role.PermissionValue, role.Id,
+		role.Name,
+		role.PermissionValue,
+		role.Id,
 	)
 	if err != nil {
 		return services.NewUnknownError(err)
@@ -121,13 +121,6 @@ func (r roleRepository) FindRoleByServer(ctx context.Context, server *entities.S
 			FROM role
 			WHERE server_id = $1`
 	rows, err := r.pool.QueryEx(ctx, sql, nil, server.Id)
-	if err != nil {
-		var pgErr pgx.PgError
-		if errors.As(err, &pgErr) {
-			log.Print(pgErr)
-		}
-		return nil, err
-	}
 
 	roles := make([]entities.Role, 0)
 

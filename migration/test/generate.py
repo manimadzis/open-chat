@@ -55,6 +55,7 @@ def gen_server_profiles(count: int) -> Sequence[dict]:
             "server_id": i,
             "user_id": i,
             "join_time": datetime(2023, 3, i % 22).isoformat(),
+            "nickname": str(hash(str(i))),
         }
         for i in range(1, count + 1)
     ]
