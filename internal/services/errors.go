@@ -33,5 +33,7 @@ var (
 	ErrNoSuchUser                 = errors.New("no such user")
 	ErrNoSuchServer               = errors.New("no such server")
 	ErrNoSuchStickerPack          = errors.New("no such sticker pack")
+	ErrNoSuchSticker              = errors.New("no such sticker pack")
+	ErrStickerAlreadyExists       = errors.New("no such sticker pack")
 	ErrServerProfileAlreadyExists = errors.New("user already joined server")
 )

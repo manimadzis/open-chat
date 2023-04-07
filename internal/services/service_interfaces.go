@@ -7,7 +7,10 @@ import (
 
 type ChannelService interface {
 	// Create returns ErrNotEnoughPermissions if user doesn't have enough permissions.
-	Create(ctx context.Context, channel entities.Channel) (
+	Create(
+		ctx context.Context,
+		channel entities.Channel,
+	) (
 		entities.ChannelId,
 		error,
 	)
@@ -26,26 +29,66 @@ type ChannelService interface {
 		ctx context.Context,
 		serverId entities.ServerId,
 		userId entities.UserId,
-	) ([]entities.Channel, error)
+	) (
+		[]entities.Channel,
+		error,
+	)
 }
 
 type MessageService interface {
 	// Send sends message. If user doesn't have sent permission it returns ErrNotEnoughPermissions
-	Send(ctx context.Context, message entities.Message) (entities.MessageId, error)
+	Send(
+		ctx context.Context,
+		message entities.Message,
+	) (
+		entities.MessageId,
+		error,
+	)
 	// Delete deletes message. If user doesnt have
-	Delete(ctx context.Context, messageId entities.MessageId, userId entities.UserId) error
-	FindInChat(ctx context.Context,
+	Delete(
+		ctx context.Context,
+		messageId entities.MessageId,
+		userId entities.UserId,
+	) error
+	FindInChat(
+		ctx context.Context,
 		userId entities.UserId,
 		channelId entities.ChannelId,
 		filters entities.MessageFiltersDTO,
-	) ([]entities.Message, error)
+	) (
+		[]entities.Message,
+		error,
+	)
 }
 
 type RoleService interface {
-	Create(ctx context.Context, role entities.Role) (entities.RoleId, error)
-	Delete(ctx context.Context, roleId entities.RoleId, userId entities.UserId, serverId entities.ServerId) error
-	Change(ctx context.Context, role entities.Role, userId entities.UserId, serverId entities.ServerId) error
-	FindByServer(ctx context.Context, serverId entities.ServerId, userId entities.UserId) ([]entities.Role, error)
+	Create(
+		ctx context.Context,
+		role entities.Role,
+	) (
+		entities.RoleId,
+		error,
+	)
+	Delete(
+		ctx context.Context,
+		roleId entities.RoleId,
+		userId entities.UserId,
+		serverId entities.ServerId,
+	) error
+	Change(
+		ctx context.Context,
+		role entities.Role,
+		userId entities.UserId,
+		serverId entities.ServerId,
+	) error
+	FindByServer(
+		ctx context.Context,
+		serverId entities.ServerId,
+		userId entities.UserId,
+	) (
+		[]entities.Role,
+		error,
+	)
 }
 
 type PermissionChecker interface {
@@ -63,7 +106,10 @@ type PermissionChecker interface {
 }
 
 type ServerService interface {
-	Create(ctx context.Context, server entities.Server) (
+	Create(
+		ctx context.Context,
+		server entities.Server,
+	) (
 		entities.ServerId,
 		error,
 	)
@@ -85,14 +131,50 @@ type ServerService interface {
 }
 
 type AuthService interface {
-	SignUp(ctx context.Context, user entities.User) (*entities.Session, error)
-	SignIn(ctx context.Context, user entities.User) (*entities.Session, error)
-	LogOut(ctx context.Context, sessionToken entities.SessionToken) error
-	FindSessionByToken(ctx context.Context, sessionToken entities.SessionToken) (*entities.Session, error)
+	SignUp(
+		ctx context.Context,
+		user entities.User,
+	) (
+		*entities.Session,
+		error,
+	)
+	SignIn(
+		ctx context.Context,
+		user entities.User,
+	) (
+		*entities.Session,
+		error,
+	)
+	LogOut(
+		ctx context.Context,
+		sessionToken entities.SessionToken,
+	) error
+	FindSessionByToken(
+		ctx context.Context,
+		sessionToken entities.SessionToken,
+	) (
+		*entities.Session,
+		error,
+	)
 }
 
 type StickerService interface {
-	CreateStickerPack(ctx context.Context, stickerPack entities.StickerPack) (entities.StickerPackId, error)
-	DeleteStickerPack(ctx context.Context, stickerPackId entities.StickerPackId) error
-	FindStickersByStickerPackId(ctx context.Context, stickerPackId entities.StickerPackId) ([]entities.Sticker, error)
+	CreateStickerPack(
+		ctx context.Context,
+		stickerPack entities.StickerPack,
+	) (
+		entities.StickerPackId,
+		error,
+	)
+	DeleteStickerPack(
+		ctx context.Context,
+		stickerPackId entities.StickerPackId,
+	) error
+	FindStickersByStickerPackId(
+		ctx context.Context,
+		stickerPackId entities.StickerPackId,
+	) (
+		[]entities.Sticker,
+		error,
+	)
 }
